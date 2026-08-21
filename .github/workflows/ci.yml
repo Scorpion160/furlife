@@ -1,0 +1,77 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository-hygiene:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run dependency-free baseline doctor
+        run: node scripts/verify-baseline.mjs
+      - name: Reject whitespace/encoding regressions
+        run: git diff --check HEAD^ HEAD || git diff --check
+      - name: Reject committed environment files
+        shell: bash
+        run: |
+          bad=$(git ls-files | grep -E '(^|/)\.env($|\.)' | grep -vE '(^|/)\.env\.example$' || true)
+          if [ -n "$bad" ]; then
+            echo "Forbidden environment files committed:"
+            echo "$bad"
+            exit 1
+          fi
+
+  node:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://furlife:ci_only@localhost:5432/furlife?schema=public
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @furlife/backend prisma:generate
+      - run: pnpm --filter @furlife/backend prisma:validate
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm build
+
+  flutter:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [client_flutter, partner_flutter]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.44.9
+          channel: stable
+          cache: true
+      - working-directory: apps/${{ matrix.app }}
+        run: flutter pub get
+      - working-directory: apps/${{ matrix.app }}
+        run: flutter gen-l10n
+      - working-directory: apps/${{ matrix.app }}
+        run: dart format --output=none --set-exit-if-changed lib test
+      - working-directory: apps/${{ matrix.app }}
+        run: flutter analyze
+      - working-directory: apps/${{ matrix.app }}
+        run: flutter test

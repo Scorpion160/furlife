@@ -1,0 +1,373 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  CLOSED
+}
+
+enum UserRole {
+  CLIENT
+  CARRIER
+  COURIER
+  OPERATOR
+  SUPPORT
+  FINANCE
+  ADMIN
+}
+
+enum ShipmentStatus {
+  DRAFT
+  SUBMITTED
+  MATCHING
+  MATCHED
+  PAYMENT_PENDING
+  PAID
+  PICKUP_ASSIGNED
+  PICKED_UP
+  INSPECTED
+  WITH_CARRIER
+  IN_TRANSIT
+  ARRIVED
+  LAST_MILE
+  DELIVERED
+  COMPLETED
+  INCIDENT
+  CANCELLED
+}
+
+enum TripStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  OPEN
+  FULL
+  DEPARTED
+  ARRIVED
+  COMPLETED
+  CANCELLED
+}
+
+enum MatchStatus {
+  PROPOSED
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CANCELLED
+}
+
+enum CustodyEventType {
+  PICKUP_FROM_SENDER
+  HANDOFF_TO_CARRIER
+  HANDOFF_FROM_CARRIER
+  DELIVERY_TO_RECIPIENT
+  INCIDENT_HOLD
+  RELEASE_FROM_HOLD
+}
+
+enum VerificationPurpose {
+  SIGN_IN
+  PHONE_CHANGE
+  SENSITIVE_ACTION
+}
+
+enum OutboxStatus {
+  PENDING
+  PROCESSING
+  PUBLISHED
+  FAILED
+}
+
+enum IncidentStatus {
+  OPEN
+  INVESTIGATING
+  RESOLVED
+  REJECTED
+}
+
+model User {
+  id          String      @id @default(cuid())
+  phoneE164   String      @unique
+  email       String?     @unique
+  status      UserStatus  @default(PENDING)
+  locale      String      @default("fr-SN")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  roles       UserRoleAssignment[]
+  sessions    Session[]
+  trips       Trip[]      @relation("CarrierTrips")
+  shipments   Shipment[]  @relation("ClientShipments")
+  incidents   Incident[]  @relation("IncidentReporter")
+
+  @@index([status])
+}
+
+model UserRoleAssignment {
+  id        String   @id @default(cuid())
+  userId    String
+  role      UserRole
+  scope     String   @default("")
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, role, scope])
+  @@index([role])
+}
+
+model Session {
+  id               String    @id @default(cuid())
+  userId           String
+  familyId         String
+  accessTokenHash  String    @unique
+  refreshTokenHash String    @unique
+  deviceIdHash     String?
+  userAgent        String?
+  ipHash           String?
+  createdAt        DateTime  @default(now())
+  lastSeenAt       DateTime  @default(now())
+  accessExpiresAt  DateTime
+  refreshExpiresAt DateTime
+  revokedAt        DateTime?
+  replacedById     String?
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@index([familyId, revokedAt])
+  @@index([accessExpiresAt])
+  @@index([refreshExpiresAt])
+}
+
+model VerificationChallenge {
+  id              String              @id @default(cuid())
+  destinationHash String
+  purpose         VerificationPurpose
+  codeHash        String
+  attempts        Int                 @default(0)
+  maxAttempts     Int                 @default(5)
+  createdAt       DateTime            @default(now())
+  expiresAt       DateTime
+  consumedAt      DateTime?
+
+  @@index([destinationHash, purpose, createdAt])
+  @@index([expiresAt])
+}
+
+model Corridor {
+  id                 String   @id @default(cuid())
+  originCountry      String
+  originCity         String
+  destinationCountry String
+  destinationCity    String
+  currency           String   @default("XOF")
+  isActive           Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  trips              Trip[]
+  shipments          Shipment[]
+
+  @@unique([originCountry, originCity, destinationCountry, destinationCity])
+  @@index([isActive])
+}
+
+model ParcelCategory {
+  id          String   @id @default(cuid())
+  code        String   @unique
+  label       String
+  isAllowed   Boolean  @default(false)
+  constraints Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  parcels     Parcel[]
+}
+
+model Trip {
+  id          String      @id @default(cuid())
+  carrierId   String
+  corridorId  String
+  flightNo    String
+  departureAt DateTime
+  capacityKg  Decimal     @db.Decimal(8, 2)
+  reservedKg  Decimal     @default(0) @db.Decimal(8, 2)
+  version     Int         @default(1)
+  status      TripStatus  @default(DRAFT)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  carrier     User        @relation("CarrierTrips", fields: [carrierId], references: [id], onDelete: Restrict)
+  corridor    Corridor    @relation(fields: [corridorId], references: [id], onDelete: Restrict)
+  matches     Match[]
+
+  @@index([corridorId, departureAt, status])
+  @@index([carrierId, status])
+}
+
+model Shipment {
+  id                 String         @id @default(cuid())
+  publicRef          String         @unique
+  clientId           String
+  corridorId         String
+  status             ShipmentStatus @default(DRAFT)
+  declaredValue      Decimal?       @db.Decimal(14, 2)
+  currentCustodianId String?
+  version             Int            @default(1)
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+  client              User           @relation("ClientShipments", fields: [clientId], references: [id], onDelete: Restrict)
+  corridor            Corridor       @relation(fields: [corridorId], references: [id], onDelete: Restrict)
+  parcels             Parcel[]
+  matches             Match[]
+  custodyEvents       CustodyEvent[]
+  media               MediaAsset[]
+  incidents           Incident[]
+
+  @@index([clientId, createdAt])
+  @@index([corridorId, status])
+  @@index([status, updatedAt])
+}
+
+model Parcel {
+  id             String         @id @default(cuid())
+  shipmentId     String
+  categoryId     String
+  description    String
+  declaredWeight Decimal        @db.Decimal(8, 2)
+  actualWeight   Decimal?       @db.Decimal(8, 2)
+  sealNo         String?        @unique
+  shipment       Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  category       ParcelCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  @@index([shipmentId])
+}
+
+model Match {
+  id         String      @id @default(cuid())
+  shipmentId String
+  tripId     String
+  score      Int         @default(0)
+  status     MatchStatus @default(PROPOSED)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  shipment   Shipment    @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  trip       Trip        @relation(fields: [tripId], references: [id], onDelete: Cascade)
+
+  @@unique([shipmentId, tripId])
+  @@index([tripId, status])
+}
+
+model CustodyEvent {
+  id         String           @id @default(cuid())
+  shipmentId String
+  fromUserId String?
+  toUserId   String?
+  type       CustodyEventType
+  requestId  String?
+  serverTime DateTime         @default(now())
+  latitude   Decimal?         @db.Decimal(9, 6)
+  longitude  Decimal?         @db.Decimal(9, 6)
+  metadata   Json?
+  shipment   Shipment         @relation(fields: [shipmentId], references: [id], onDelete: Restrict)
+
+  @@index([shipmentId, serverTime])
+  @@index([toUserId, serverTime])
+}
+
+model MediaAsset {
+  id           String   @id @default(cuid())
+  shipmentId   String
+  objectKey    String   @unique
+  contentType  String
+  sizeBytes    BigInt
+  sha256       String
+  purpose      String
+  uploadedById String?
+  createdAt    DateTime @default(now())
+  deletedAt    DateTime?
+  shipment     Shipment @relation(fields: [shipmentId], references: [id], onDelete: Restrict)
+
+  @@index([shipmentId, purpose])
+}
+
+model Incident {
+  id           String         @id @default(cuid())
+  shipmentId   String
+  reporterId   String
+  category     String
+  status       IncidentStatus @default(OPEN)
+  description  String
+  resolution   String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  shipment     Shipment       @relation(fields: [shipmentId], references: [id], onDelete: Restrict)
+  reporter     User           @relation("IncidentReporter", fields: [reporterId], references: [id], onDelete: Restrict)
+
+  @@index([shipmentId, status])
+  @@index([reporterId, createdAt])
+}
+
+model IdempotencyRecord {
+  id           String   @id @default(cuid())
+  keyHash      String
+  actorId      String?
+  route        String
+  requestHash  String
+  responseCode Int?
+  responseBody Json?
+  createdAt    DateTime @default(now())
+  expiresAt    DateTime
+
+  @@unique([keyHash, route])
+  @@index([expiresAt])
+}
+
+model WebhookEvent {
+  id              String   @id @default(cuid())
+  provider        String
+  providerEventId String
+  payloadHash     String
+  receivedAt      DateTime @default(now())
+  processedAt     DateTime?
+  failedAt        DateTime?
+  failureReason   String?
+
+  @@unique([provider, providerEventId])
+  @@index([processedAt, failedAt])
+}
+
+model OutboxEvent {
+  id          String       @id @default(cuid())
+  aggregate   String
+  aggregateId String
+  eventType   String
+  payload     Json
+  status      OutboxStatus @default(PENDING)
+  attempts    Int          @default(0)
+  availableAt DateTime     @default(now())
+  createdAt   DateTime     @default(now())
+  publishedAt DateTime?
+
+  @@index([status, availableAt])
+  @@index([aggregate, aggregateId, createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  requestId String?
+  ipHash    String?
+  action    String
+  entity    String
+  entityId  String
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId, createdAt])
+  @@index([actorId, createdAt])
+  @@index([requestId])
+}

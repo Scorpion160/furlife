@@ -1,0 +1,58 @@
+name: Bootstrap toolchain artifacts
+
+on:
+  push:
+    branches:
+      - 'bootstrap/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: furlife
+          POSTGRES_USER: furlife
+          POSTGRES_PASSWORD: furlife_ci_only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U furlife -d furlife"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://furlife:furlife_ci_only@localhost:5432/furlife?schema=public
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .node-version
+          cache: pnpm
+      - name: Generate deterministic lockfile
+        run: pnpm install --lockfile-only --no-frozen-lockfile
+      - name: Install from generated lockfile
+        run: pnpm install --frozen-lockfile
+      - name: Generate Prisma client
+        run: pnpm --filter @furlife/backend prisma:generate
+      - name: Validate Prisma schema
+        run: pnpm --filter @furlife/backend prisma:validate
+      - name: Generate initial migration
+        run: pnpm --filter @furlife/backend exec prisma migrate dev --name initial --create-only --skip-seed
+      - name: Upload bootstrap artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: furlife-bootstrap-artifacts
+          if-no-files-found: error
+          retention-days: 3
+          path: |
+            pnpm-lock.yaml
+            apps/backend/prisma/migrations
