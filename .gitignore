@@ -1,0 +1,38 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+
+# Node
+node_modules/
+.next/
+dist/
+coverage/
+.pnpm-store/
+
+# Flutter/Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+.pub-cache/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Runtime / local data
+*.log
+.tmp/
+tmp/
+
+# Project-local toolchains
+.tools/
+*.tsbuildinfo

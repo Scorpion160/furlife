@@ -1,0 +1,23 @@
+{
+  "@@locale": "fr",
+  "appName": "Furlife",
+  "tagline": "Vos colis voyagent en confiance.",
+  "signInTitle": "Connexion sécurisée",
+  "signInSubtitle": "Entrez votre numéro de téléphone. Nous vous enverrons un code à usage unique.",
+  "phoneLabel": "Numéro de téléphone",
+  "phoneInvalid": "Entrez un numéro au format international, par exemple +221771234567.",
+  "sendCode": "Recevoir mon code",
+  "signInPrivacy": "Votre numéro sert à sécuriser votre compte et vos opérations Furlife.",
+  "otpTitle": "Entrez le code reçu",
+  "otpSubtitle": "Un code à 6 chiffres a été envoyé au {phone}.",
+  "@otpSubtitle": {"placeholders": {"phone": {"type": "String"}}},
+  "otpLabel": "Code à 6 chiffres",
+  "verifyCode": "Vérifier",
+  "logout": "Se déconnecter",
+  "connectedAs": "Connecté avec {phone}",
+  "@connectedAs": {"placeholders": {"phone": {"type": "String"}}},
+  "sendParcel": "Envoyer un colis",
+  "sendParcelSubtitle": "Bientôt disponible dans le prochain incrément.",
+  "myParcels": "Mes colis",
+  "myParcelsSubtitle": "Le suivi sera activé après le module commande."
+}

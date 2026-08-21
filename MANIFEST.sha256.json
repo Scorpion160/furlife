@@ -1,0 +1,626 @@
+{
+    "version":  "0.3.10",
+    "algorithm":  "sha256",
+    "files":  [
+                  {
+                      "path":  ".editorconfig",
+                      "sha256":  "b5e0bb2ccd148b2d84887e8a6255068f750645a8bc8784dab16d822840b6d683",
+                      "size":  214
+                  },
+                  {
+                      "path":  ".env.example",
+                      "sha256":  "b743f8e89410be79775db8ccfab06bf2dda64a8b1969a101d4c72bc917cdfa09",
+                      "size":  1363
+                  },
+                  {
+                      "path":  ".flutter-version",
+                      "sha256":  "d25bb29fd83fe90c61d22b5f15767fabc0033d3ff98feb07d65d539b1400302f",
+                      "size":  7
+                  },
+                  {
+                      "path":  ".gitattributes",
+                      "sha256":  "8eac28da0ca7cee7f500d206adbdea9f43b11ebc19aefda0e727be4a34e6d448",
+                      "size":  278
+                  },
+                  {
+                      "path":  ".github/CODEOWNERS",
+                      "sha256":  "dfd72a0f74e8e5ef458772dc736ccc3a2b2bdeb49480d92f1209ed4094847b5d",
+                      "size":  184
+                  },
+                  {
+                      "path":  ".github/dependabot.yml",
+                      "sha256":  "00a812b35b09f3ce897b073f341432a900e1b4b1c5fe89df254b693b8aa0a9a4",
+                      "size":  427
+                  },
+                  {
+                      "path":  ".github/pull_request_template.md",
+                      "sha256":  "ade25b3b970a58bcb68c58d449d9803941c6aedbc2773d63d0a4ba67a62a96ef",
+                      "size":  468
+                  },
+                  {
+                      "path":  ".github/workflows/bootstrap-toolchain.yml",
+                      "sha256":  "d191be0fbf1030551fbff894df5bea23cff01d0923ad9a8b2110e8c3022bd8c7",
+                      "size":  1748
+                  },
+                  {
+                      "path":  ".github/workflows/ci.yml",
+                      "sha256":  "5b4d45569aa3fc0479cd7db8fbbf8c245c38cf0165bdc4c40a980980d6b5fae7",
+                      "size":  2217
+                  },
+                  {
+                      "path":  ".gitignore",
+                      "sha256":  "3d3e3cf46bd24df2c764c36c7efc3f3157882e2dad4a58319f49d06ea7b8a19c",
+                      "size":  375
+                  },
+                  {
+                      "path":  ".node-version",
+                      "sha256":  "177d20030d4dcc37eae9ef92865ec54dadce60e8f19e9a34a5d4f37502195a36",
+                      "size":  8
+                  },
+                  {
+                      "path":  ".npmrc",
+                      "sha256":  "9449711098800d6acab99c329b997f64d521c66bd240624f8892ae9f8984aaba",
+                      "size":  90
+                  },
+                  {
+                      "path":  "apps/admin/app/globals.css",
+                      "sha256":  "3b510dcd480f5766cf0cc66ad9faaf8ba883369e9858af8f18e9ec3a1c36c1cb",
+                      "size":  619
+                  },
+                  {
+                      "path":  "apps/admin/app/layout.tsx",
+                      "sha256":  "2af6114be307be2aa2945bcb505d7d8e72a3c5a9bc0fc392bda4fe933ae70203",
+                      "size":  388
+                  },
+                  {
+                      "path":  "apps/admin/app/page.tsx",
+                      "sha256":  "9d92d77941ea1878cd7e424306eec5dc7324e9045e334ffc1c45263e152bcf29",
+                      "size":  329
+                  },
+                  {
+                      "path":  "apps/admin/next.config.mjs",
+                      "sha256":  "35ee91181c7fdeb0fc27cda8e2f1e9ffb7c6457c59b2897a701ff10057ae90c5",
+                      "size":  517
+                  },
+                  {
+                      "path":  "apps/admin/next-env.d.ts",
+                      "sha256":  "f2b3bca04d1bfe583daae1e1f798c92ec24bb6693bd88d0a09ba6802dee362a8",
+                      "size":  211
+                  },
+                  {
+                      "path":  "apps/admin/package.json",
+                      "sha256":  "7276414a8c8e24aedd3d2847b71dfd7659708f0daf67fd2146cdd05d5a475713",
+                      "size":  573
+                  },
+                  {
+                      "path":  "apps/admin/scripts/smoke-test.mjs",
+                      "sha256":  "4d4ff9101ba4b5824045858a05c380bf29ad9ebd00f53cf66163415ba11a8780",
+                      "size":  3081
+                  },
+                  {
+                      "path":  "apps/admin/tsconfig.json",
+                      "sha256":  "5cf57746e0e59cdfb851c3886ce481456b2ff65a067b39b96b375064c3fc7728",
+                      "size":  608
+                  },
+                  {
+                      "path":  "apps/backend/jest.config.cjs",
+                      "sha256":  "a89997f4debd6482e83eb911ff1083e6f4d3e94aed40b091f1b2e96b5d38e06b",
+                      "size":  419
+                  },
+                  {
+                      "path":  "apps/backend/nest-cli.json",
+                      "sha256":  "2673d4b514404f4431da9f1b36f0c676825b5dec94b3278ba43f2d35bc3c58bb",
+                      "size":  55
+                  },
+                  {
+                      "path":  "apps/backend/package.json",
+                      "sha256":  "7419ee717f7c5d16ab03cccac070d24bc99ecc23a1418e7f9a502e0b7c284c40",
+                      "size":  1403
+                  },
+                  {
+                      "path":  "apps/backend/prisma/migrations/20260810154805_initial/migration.sql",
+                      "sha256":  "1a0cf319526fa3edcec066d77879c8c334d4ecb7c1ca389b001974b8c2834318",
+                      "size":  15107
+                  },
+                  {
+                      "path":  "apps/backend/prisma/migrations/migration_lock.toml",
+                      "sha256":  "0b31557132059fe8acfa113635faaf57221a983fcc90ef2221bc35ca5308fa70",
+                      "size":  127
+                  },
+                  {
+                      "path":  "apps/backend/prisma/schema.prisma",
+                      "sha256":  "08e56c8c83adc627c60e77f5ab2e8e0c4410f982730b28303289ead5674ff2dc",
+                      "size":  9549
+                  },
+                  {
+                      "path":  "apps/backend/src/app.module.ts",
+                      "sha256":  "1ba2472925ce5885cb545ebe50b512f42fd31e5ed72baf5a64f9cb68f6f1edb3",
+                      "size":  935
+                  },
+                  {
+                      "path":  "apps/backend/src/common/crypto/hash.util.spec.ts",
+                      "sha256":  "f1f72d5f8f44ae6bd51ed55950f7b0e53f490d1ba2d95433832e31b9a86cb4f8",
+                      "size":  864
+                  },
+                  {
+                      "path":  "apps/backend/src/common/crypto/hash.util.ts",
+                      "sha256":  "1e09ea7501a0fbf21e20a33b52b43e9b56d8a48a2a40fbbfaf353bb6d235aa9d",
+                      "size":  779
+                  },
+                  {
+                      "path":  "apps/backend/src/common/filters/http-exception.filter.ts",
+                      "sha256":  "4d00a47283e888bb10e3ba5cca7f6cf96f22c8637dd932d185332ba1eab1a6d1",
+                      "size":  1402
+                  },
+                  {
+                      "path":  "apps/backend/src/common/middleware/request-id.middleware.ts",
+                      "sha256":  "a3d0f41fe155bedc6835b41c54d16992b7add8074c0efab1a5d32667e1c422f1",
+                      "size":  415
+                  },
+                  {
+                      "path":  "apps/backend/src/config/env.schema.ts",
+                      "sha256":  "400980d79fa9d300217782995b1e7cade961a48ed997d073134ac0d76ac2e80f",
+                      "size":  3355
+                  },
+                  {
+                      "path":  "apps/backend/src/database/database.module.ts",
+                      "sha256":  "d3cfc8b06cc136be0c415d21c96419ab11c71b266f14f30ad06c85c28835ad7f",
+                      "size":  212
+                  },
+                  {
+                      "path":  "apps/backend/src/database/prisma.service.ts",
+                      "sha256":  "088a4feeb375c0360326b4ae4f1f43cac9b30528b4ce2b4220872766064125b9",
+                      "size":  350
+                  },
+                  {
+                      "path":  "apps/backend/src/main.ts",
+                      "sha256":  "df1baaee1105cafd0b950ca982d2fad8f84e41373f9c1196670a268056eb45a6",
+                      "size":  2175
+                  },
+                  {
+                      "path":  "apps/backend/src/modules/health/health.controller.ts",
+                      "sha256":  "198d7c94235e7887e7fd6aa5f3c7067acc543ec6918b68ea20727046f1d0b6c0",
+                      "size":  611
+                  },
+                  {
+                      "path":  "apps/backend/src/modules/health/health.module.ts",
+                      "sha256":  "09b379f5dbecf2ac3f92ac60bb8e5c9cee86377125efcbb7dd1c4122e3bb766f",
+                      "size":  172
+                  },
+                  {
+                      "path":  "apps/backend/src/modules/identity/dto/refresh-session.dto.ts",
+                      "sha256":  "1a8630542525f64fcabbc3d308e833abd5ee23285ec10ba57237577b49d948d1",
+                      "size":  147
+                  },
+                  {
+                      "path":  "apps/backend/src/modules/identity/dto/start-phone-verification.dto.ts",
+                      "sha256":  "d23900722bdcec04d9a365eb868991e2de3d3cc9f6af10705ed00075132e040b",
+                      "size":  165
+                  },
+                  {
+                      "path":  "apps/backend/src/modules/identity/dto/verify-phone.dto.ts",
+                      "sha256":  "a38621d16af97ee3e394b00059980a76569211c857d2acd39c8f79418d3d6f57",
+                      "size":  302
+                  },
+                  {
+                      "path":  "apps/backend/src/modules/identity/guards/access-token.guard.ts",
+                      "sha256":  "ea02bf1c1be65c8da0cd86554b38c688a6f001d50dc5fd70905ec7c10616ec5c",
+                      "size":  1271
+                  },
+                  {
+                      "path":  "apps/backend/src/modules/identity/identity.controller.ts",
+                      "sha256":  "75bfd0f025376c193be632ced576f2f1305bbe7cc18617b6d321272d1d1eac79",
+                      "size":  2589
+                  },
+                  {
+                      "path":  "apps/backend/src/modules/identity/identity.module.ts",
+                      "sha256":  "c97f9b7fb963df9ff2636df73bccd8786e2a4a5fbc439cf664b985470f75a4c6",
+                      "size":  568
+                  },
+                  {
+                      "path":  "apps/backend/src/modules/identity/services/identity.service.ts",
+                      "sha256":  "fc89865b7766604d4213ea562d5b0af5fea606b27ae173069ad6b3050cacef0d",
+                      "size":  6219
+                  },
+                  {
+                      "path":  "apps/backend/src/modules/identity/services/otp-sender.service.ts",
+                      "sha256":  "bd9b6500c08d5f0fbd51435f27bc8d77942b95f00141a8c8118108e37f266434",
+                      "size":  1188
+                  },
+                  {
+                      "path":  "apps/backend/src/modules/identity/services/session.service.ts",
+                      "sha256":  "777fb0e5b6a4c2dabd38491da7d56aae1a3fd742e37db334f8eff6d4b39c873c",
+                      "size":  5789
+                  },
+                  {
+                      "path":  "apps/backend/src/modules/identity/types/auth-context.ts",
+                      "sha256":  "3d034d18f7db3a6042c105dd68ec57035c4e72a66ae84873c351524563a459cf",
+                      "size":  215
+                  },
+                  {
+                      "path":  "apps/backend/tsconfig.json",
+                      "sha256":  "77a5f27dad68790209ff5ecb9748b5bac50ed9e28ac5459e9bf1df19f85d939b",
+                      "size":  385
+                  },
+                  {
+                      "path":  "apps/client_flutter/analysis_options.yaml",
+                      "sha256":  "9208629f8cf2e5e1ae45f6f2ab1a54cd60fba7a95ede8bbcccd2ebcbc5d10e3e",
+                      "size":  429
+                  },
+                  {
+                      "path":  "apps/client_flutter/l10n.yaml",
+                      "sha256":  "56126d62f8a6513d517aea0a7c1a86dcd03f91df0e29330aec6c63857b9833b1",
+                      "size":  120
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/app/app.dart",
+                      "sha256":  "7013bec4e86089bc081d83053ed2bc290aeb2f9929eb1374efe36e93917f094d",
+                      "size":  849
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/app/router.dart",
+                      "sha256":  "da405672b4756dbc9d492e50b8e34f6dfe7485cc8b7f4d36b95ac1e1b46a3d66",
+                      "size":  1877
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/core/config/app_config.dart",
+                      "sha256":  "37d0b0bb98b2d448e24e75807699388d4b46323474817ed8b16c2db852f4bf38",
+                      "size":  1340
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/core/network/api_client.dart",
+                      "sha256":  "2576c87bafc92728770455be8e6caa6a6e6786489cfaec5495c9d1be550b8865",
+                      "size":  2937
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/core/network/api_exception.dart",
+                      "sha256":  "d0e7baa11640067bab044a8528e1cf85d24567204535565b365d989d64cca894",
+                      "size":  337
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/core/storage/device_identity_store.dart",
+                      "sha256":  "fe13b7ae39808f049d4c4d9743fb00197a53f681b174240b137a2f65afcdb1a4",
+                      "size":  711
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/core/storage/token_store.dart",
+                      "sha256":  "6b1dd1f785d4a34e538acedc0fbe5b0ccb2d131df92fcf2f758055b6688b0481",
+                      "size":  2154
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/core/theme/furlife_theme.dart",
+                      "sha256":  "fe03a14b4a41973bade2852d4c8aa87b02a60fd83b1b44d10b432d3f721b664d",
+                      "size":  977
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/features/auth/application/auth_providers.dart",
+                      "sha256":  "5a09583366d91fe622e64aefb209d4673960bc8fb21ea3fccd703c864adfdbb7",
+                      "size":  4858
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/features/auth/data/auth_api.dart",
+                      "sha256":  "7043f081e08d9c26b80f0ac81379e5191c03c5dc2b88dde02e05ddc5b636faf6",
+                      "size":  2430
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/features/auth/data/auth_repository.dart",
+                      "sha256":  "4329b38abb1ee3d80181785f89ad4b36551e276bbe0c0c61f0f90591c520c83f",
+                      "size":  2111
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/features/auth/domain/auth_models.dart",
+                      "sha256":  "8ca3501104d0502ae0ab3e15adebe19bbe6f122fac36498bea80f8cb6d31e65e",
+                      "size":  1717
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/features/auth/presentation/otp_page.dart",
+                      "sha256":  "95e501cd5edcdb2fbb74b4c890586e40d9255c65b3cd1e5e87a4883dbf87176f",
+                      "size":  3474
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/features/auth/presentation/phone_sign_in_page.dart",
+                      "sha256":  "5165f81e04e7bf6b19262948271e50f9a51b59e47ce54ba4a208385324a9a1a9",
+                      "size":  3936
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/features/auth/presentation/session_loading_page.dart",
+                      "sha256":  "0639456acbd2c979b977c5ba5a51775e9094df3ab7b37b4da20b347004eb8bed",
+                      "size":  309
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/features/home/presentation/home_page.dart",
+                      "sha256":  "a64d574784d60fd354ee5e9c6bbcc74d31476fa83f3f447ee00c7e3d0f0110fc",
+                      "size":  2195
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/l10n/app_fr.arb",
+                      "sha256":  "62744d8091c39a9b07aa4276ee3a54e613bfeb3b3179533af73f43b77ecfdb73",
+                      "size":  1103
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/l10n/app_localizations.dart",
+                      "sha256":  "3b20ba389783880cf125af6fc03f70c437327604295e5d6c89136eb9e5bd0f19",
+                      "size":  7449
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/l10n/app_localizations_fr.dart",
+                      "sha256":  "e361d346f5a53be30629545c5b7e43eb849ba2ff55a7c9834c876a0558dc02ef",
+                      "size":  1741
+                  },
+                  {
+                      "path":  "apps/client_flutter/lib/main.dart",
+                      "sha256":  "b25cb111a2875b63f33825fa1191bc69237223d83abc287c2929dd2bda18d022",
+                      "size":  534
+                  },
+                  {
+                      "path":  "apps/client_flutter/pubspec.lock",
+                      "sha256":  "8910e55f9af81f0d04b4a824078654ed54bc34098fe05beb4b084a5288097c40",
+                      "size":  24631
+                  },
+                  {
+                      "path":  "apps/client_flutter/pubspec.yaml",
+                      "sha256":  "9ff357f8a70d1834d716ce7cae2c9a3959a6aba8037d05335ad48ea9f72c0a67",
+                      "size":  556
+                  },
+                  {
+                      "path":  "apps/client_flutter/test/app_config_test.dart",
+                      "sha256":  "767800bdf8c6313f1a8f67b758e7bdf9d09c413d70938941999c68c4cec9bbcc",
+                      "size":  149
+                  },
+                  {
+                      "path":  "apps/partner_flutter/analysis_options.yaml",
+                      "sha256":  "9208629f8cf2e5e1ae45f6f2ab1a54cd60fba7a95ede8bbcccd2ebcbc5d10e3e",
+                      "size":  429
+                  },
+                  {
+                      "path":  "apps/partner_flutter/l10n.yaml",
+                      "sha256":  "56126d62f8a6513d517aea0a7c1a86dcd03f91df0e29330aec6c63857b9833b1",
+                      "size":  120
+                  },
+                  {
+                      "path":  "apps/partner_flutter/lib/app/app.dart",
+                      "sha256":  "cafec6561bf9b0064721bb75c69214e98639923301c18825285f7b43dee748e2",
+                      "size":  571
+                  },
+                  {
+                      "path":  "apps/partner_flutter/lib/core/config/app_config.dart",
+                      "sha256":  "932ede48f0fd8c95282aed394a25d815a35f7d42c00434961a37fb61acf1f8ef",
+                      "size":  692
+                  },
+                  {
+                      "path":  "apps/partner_flutter/lib/core/theme/furlife_theme.dart",
+                      "sha256":  "fe03a14b4a41973bade2852d4c8aa87b02a60fd83b1b44d10b432d3f721b664d",
+                      "size":  977
+                  },
+                  {
+                      "path":  "apps/partner_flutter/lib/features/home/presentation/home_page.dart",
+                      "sha256":  "e50f7ec4d753a6ae162f524ad1f632e1eade0a0a1d4cf71b61f95976b3269ac6",
+                      "size":  747
+                  },
+                  {
+                      "path":  "apps/partner_flutter/lib/l10n/app_fr.arb",
+                      "sha256":  "82a3fc293d1196d83ffb6bf6bcb172115172430418be160f253a7350a0a0a9db",
+                      "size":  172
+                  },
+                  {
+                      "path":  "apps/partner_flutter/lib/l10n/app_localizations.dart",
+                      "sha256":  "9a197003acb364cd7d021ad5af43ccaf993e7f53818f749b033df12b4fc19515",
+                      "size":  4922
+                  },
+                  {
+                      "path":  "apps/partner_flutter/lib/l10n/app_localizations_fr.dart",
+                      "sha256":  "db65a9761c9f6a671da47859e949ce1908c6e0c45c09a3efc4fd811cfc81c92a",
+                      "size":  514
+                  },
+                  {
+                      "path":  "apps/partner_flutter/lib/main.dart",
+                      "sha256":  "f0a881210536e94cd04f1c2d8893aadc3c03ac6195494f9eebe4d52078bba973",
+                      "size":  357
+                  },
+                  {
+                      "path":  "apps/partner_flutter/pubspec.lock",
+                      "sha256":  "fce8ad7712d2fda11a5abc2a710110884553613283f164f17da01d470b7576b0",
+                      "size":  24631
+                  },
+                  {
+                      "path":  "apps/partner_flutter/pubspec.yaml",
+                      "sha256":  "60b017f0743892b4de1c01739d1457c61874f4d510f32967715e716dbc808fc4",
+                      "size":  558
+                  },
+                  {
+                      "path":  "apps/partner_flutter/test/bootstrap_test.dart",
+                      "sha256":  "767800bdf8c6313f1a8f67b758e7bdf9d09c413d70938941999c68c4cec9bbcc",
+                      "size":  149
+                  },
+                  {
+                      "path":  "docs/adr/0006-app-env-vs-node-env.md",
+                      "sha256":  "696d61940823a1ccedadfc7c0174a7df352bdd1c8b98b789137492627a98d51f",
+                      "size":  767
+                  },
+                  {
+                      "path":  "docs/adr/ADR-011-prisma.md",
+                      "sha256":  "83a74559a71d32a87ec286727bd939473ca05435fbc58db01fd9f26e935f2655",
+                      "size":  502
+                  },
+                  {
+                      "path":  "docs/adr/ADR-012-opaque-session-tokens.md",
+                      "sha256":  "cac2101a86d94dfb7d4e6aabda35d4d7f18648edb9d7bb962425294109b5fd25",
+                      "size":  1406
+                  },
+                  {
+                      "path":  "docs/adr/ADR-013-no-transitive-imports.md",
+                      "sha256":  "cd83eacf2be02c2f68a2d7d1d5fbad0b1e9554a8fdeeb47f3c0f80091bb706c5",
+                      "size":  662
+                  },
+                  {
+                      "path":  "docs/ARCHITECTURE_MAP.md",
+                      "sha256":  "e1e07f8eb9ff4dce93dfcd8092341ab1411cadbdf2181c7bc1cf2c277e3abe62",
+                      "size":  720
+                  },
+                  {
+                      "path":  "docs/AUTH_VERTICAL_SLICE.md",
+                      "sha256":  "900ca571b5f369d788a424f7346186f6848b815c1967abc769d6653322481a1b",
+                      "size":  1290
+                  },
+                  {
+                      "path":  "docs/BOOTSTRAP_FIX_V0_3_1.md",
+                      "sha256":  "ffa3c0e327697eaf06b5e034834923fd726c4c125fad8169dc8705be6444126e",
+                      "size":  1151
+                  },
+                  {
+                      "path":  "docs/BOOTSTRAP_FIX_V0_3_2.md",
+                      "sha256":  "cc26617b2015d305fc36671de8ae57fb0349016f62d7b6d4a1d1270f9feb188f",
+                      "size":  1666
+                  },
+                  {
+                      "path":  "docs/BOOTSTRAP_FIX_V0_3_3.md",
+                      "sha256":  "e2802ac6d6252acb294a8eaf553dc26482f1864adc6783b7eb6ed9db7679b7bb",
+                      "size":  682
+                  },
+                  {
+                      "path":  "docs/BOOTSTRAP_FIX_V0_3_4.md",
+                      "sha256":  "088b7b6cc1204a510bd90ada9cf540c903c440698c934d11f612c8be3c7531e6",
+                      "size":  729
+                  },
+                  {
+                      "path":  "docs/BOOTSTRAP_FIX_V0_3_5.md",
+                      "sha256":  "4842a6d789efe75f2d2b55d4add0b65344aeca83340a1ea6b590f65d887442a4",
+                      "size":  488
+                  },
+                  {
+                      "path":  "docs/DEFINITION_OF_DONE.md",
+                      "sha256":  "2512d439a6f94be12c4ef3c2d032e25a075c13546322dd78f406b5fc1e0fcc18",
+                      "size":  826
+                  },
+                  {
+                      "path":  "docs/ENGINEERING_BASELINE.md",
+                      "sha256":  "6e654e61a8fbe0a5cd25d416cf01b022c85cc43d8b5ce00d76f1c8cc9216e0bf",
+                      "size":  2196
+                  },
+                  {
+                      "path":  "docs/GATE_STATUS_2026-08-10.md",
+                      "sha256":  "4b54224b8ff52005efacb177ad6257ebcc83c5cd4f02150f216588162b6b6109",
+                      "size":  1419
+                  },
+                  {
+                      "path":  "docs/LESSONS_FROM_KNJ_DIAMBAR.md",
+                      "sha256":  "0b3b0ba16aa11d31632dbba7099275fdafb9e34c553f89bfa64950fd66c58309",
+                      "size":  2051
+                  },
+                  {
+                      "path":  "docs/PATCH_v0.3.10.md",
+                      "sha256":  "52918a824e74bead9a30e23bac43ea6e22e6d58c95c223962e720bb91e9e6601",
+                      "size":  729
+                  },
+                  {
+                      "path":  "docs/PATCH_v0.3.6.md",
+                      "sha256":  "89edfe7bf55ebb81b478cde88da0f379c725362c1210934a3ec16ffd08e94a45",
+                      "size":  736
+                  },
+                  {
+                      "path":  "docs/PATCH_v0.3.7.md",
+                      "sha256":  "04bb7ac1fbdf0be2c389239bbde24f1d32ea40fdda6d9f66c3b22907d3a4da5c",
+                      "size":  617
+                  },
+                  {
+                      "path":  "docs/PATCH_v0.3.9.md",
+                      "sha256":  "6a98a12237058808397c9e55fdaab6a7708788c442702fdfa5f4a185b765a45c",
+                      "size":  523
+                  },
+                  {
+                      "path":  "docs/runbooks/BACKUP_RESTORE.md",
+                      "sha256":  "aab02de49d0a4ccf9f0c6fac21ff228d5a01707b3670fa09882e5f93913cfb3e",
+                      "size":  380
+                  },
+                  {
+                      "path":  "docs/runbooks/DEPLOYMENT_AND_ROLLBACK.md",
+                      "sha256":  "bc6ad2db3458d14a1f5abb6588e42cc3a800b480a7a6a3a124a861e2c5aae76c",
+                      "size":  803
+                  },
+                  {
+                      "path":  "docs/SPRINT0_CHECKLIST.md",
+                      "sha256":  "5f99c6f312b3f4a8916a37c089cdccca9c9a3f7b10a25e7294f92b1ea5e73a84",
+                      "size":  2142
+                  },
+                  {
+                      "path":  "eslint.config.mjs",
+                      "sha256":  "0d39e1dd650a41247b35f8afd698f8763b271b65460f834dea51fc977b76035a",
+                      "size":  512
+                  },
+                  {
+                      "path":  "infra/docker-compose.dev.yml",
+                      "sha256":  "cd1903710b27e1aab2549fd285c33e45cbabc02ee7e14ed2c4716286e0b810d5",
+                      "size":  1553
+                  },
+                  {
+                      "path":  "package.json",
+                      "sha256":  "3a969fe81c4b14f3c8dce71bf86068e3ec78e410f33a37a607b6edc4e2f2ba34",
+                      "size":  883
+                  },
+                  {
+                      "path":  "packages/contracts/index.ts",
+                      "sha256":  "5a6e8e3c1e64cdbc24814757f74b5c9c502f2c6c54dd344a8ea4e8359d68a492",
+                      "size":  187
+                  },
+                  {
+                      "path":  "packages/contracts/package.json",
+                      "sha256":  "4127e59251aeb155eb7a743c6962cbea178cd8b7d6d64abecfb761b1d3f6f360",
+                      "size":  98
+                  },
+                  {
+                      "path":  "packages/design_tokens/package.json",
+                      "sha256":  "90390e44e63ef9c83152c3979bf47db05ee2f9b6bad32b29eefa7205fc35be65",
+                      "size":  80
+                  },
+                  {
+                      "path":  "packages/design_tokens/tokens.json",
+                      "sha256":  "865451f26229c65d8aaa0cb82c4e8849c3e018254ba3cbb210e39438d5e70522",
+                      "size":  215
+                  },
+                  {
+                      "path":  "pnpm-lock.yaml",
+                      "sha256":  "1ad40166b08a6b3ee71b80f2995d819ff54ce81f1fded27b83fa07cad84fd8cc",
+                      "size":  294190
+                  },
+                  {
+                      "path":  "pnpm-workspace.yaml",
+                      "sha256":  "86ca5a4f0ff224700cd2741b6ae8c282af5bfe6688a77088d04945fcdd3a1576",
+                      "size":  57
+                  },
+                  {
+                      "path":  "README.md",
+                      "sha256":  "7fc0156d32668bcee2a67c87beb3c720de0a9c724d7d67a91b7d3c1ba0cecc10",
+                      "size":  2378
+                  },
+                  {
+                      "path":  "scripts/bootstrap-linux.sh",
+                      "sha256":  "a8975b44ff1516c6d5c6182ec2f8d88733cdf8c1e07ec4ff44f5f6c6c9b46b12",
+                      "size":  2447
+                  },
+                  {
+                      "path":  "scripts/bootstrap-windows.ps1",
+                      "sha256":  "f784f7e143fc51f9500d7547e956ff4546407c5da5daa91bf0510c914697aeac",
+                      "size":  14446
+                  },
+                  {
+                      "path":  "scripts/dev-doctor.mjs",
+                      "sha256":  "d5bb9455d05504fc42709718a83717c483a3db6d57e63aa38e5b33151b7b587c",
+                      "size":  3080
+                  },
+                  {
+                      "path":  "scripts/generate-dev-env.mjs",
+                      "sha256":  "f2ff93c554b0ec07b2cf4a6d9b499385e90cff705ad9840ec9183810fa8a7ef1",
+                      "size":  1229
+                  },
+                  {
+                      "path":  "scripts/upgrade-dev-env.mjs",
+                      "sha256":  "899eb2a90abbb8cacdbe82705f7de3b05ff32ca13ef8ea97a74db54e185baf06",
+                      "size":  1426
+                  },
+                  {
+                      "path":  "scripts/verify-baseline.mjs",
+                      "sha256":  "22b5e4fb74acac4d9928164f0df7c07ad3bf74d2f940d17670a709fe137dbaec",
+                      "size":  10481
+                  }
+              ]
+}
