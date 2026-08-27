@@ -17,10 +17,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Run dependency-free baseline doctor
         run: node scripts/verify-baseline.mjs
+
       - name: Reject whitespace/encoding regressions
         run: git diff --check HEAD^ HEAD || git diff --check
+
       - name: Reject committed environment files
         shell: bash
         run: |
@@ -33,45 +36,158 @@ jobs:
 
   node:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: furlife
+          POSTGRES_USER: furlife
+          POSTGRES_PASSWORD: ci_only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U furlife -d furlife"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
     env:
-      DATABASE_URL: postgresql://furlife:ci_only@localhost:5432/furlife?schema=public
+      APP_ENV: test
+      API_PORT: 8080
+      TRUST_PROXY_HOPS: 0
+
+      DATABASE_URL: postgresql://furlife:ci_only@127.0.0.1:5432/furlife?schema=public
+      REDIS_URL: redis://127.0.0.1:6379
+
+      S3_ENDPOINT: http://127.0.0.1:9000
+      S3_REGION: us-east-1
+      S3_BUCKET: furlife-ci
+      S3_ACCESS_KEY: furlife_ci_access
+      S3_SECRET_KEY: furlife_ci_secret
+
+      PRIVACY_HASH_SECRET: ci_privacy_hash_secret_32_chars_minimum_2026
+      OTP_HASH_SECRET: ci_otp_hash_secret_different_32_chars_2026
+
+      ACCESS_TOKEN_TTL_SECONDS: 900
+      REFRESH_TOKEN_TTL_SECONDS: 2592000
+      OTP_TTL_SECONDS: 300
+      OTP_RESEND_COOLDOWN_SECONDS: 60
+      OTP_MAX_ATTEMPTS: 5
+
+      OTP_PROVIDER: disabled
+      OTP_DEV_EXPOSE_CODE: false
+
+      CORS_ALLOWED_ORIGINS: ""
+      SWAGGER_ENABLED: false
+      ADMIN_MFA_REQUIRED: true
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: pnpm/action-setup@v4
         with:
           version: 9.15.4
+
       - uses: actions/setup-node@v4
         with:
           node-version-file: .node-version
           cache: pnpm
+
       - run: pnpm install --frozen-lockfile
+
       - run: pnpm --filter @furlife/backend prisma:generate
+
       - run: pnpm --filter @furlife/backend prisma:validate
+
+      - name: Apply database migrations
+        run: pnpm --filter @furlife/backend prisma:migrate:deploy
+
       - run: pnpm lint
+
       - run: pnpm typecheck
+
       - run: pnpm test
+
       - run: pnpm build
+
+      - name: Backend compiled runtime smoke test
+        shell: bash
+        run: |
+          pushd apps/backend
+
+          node dist/main.js > /tmp/furlife-backend.log 2>&1 &
+          backend_pid=$!
+
+          cleanup() {
+            kill "$backend_pid" 2>/dev/null || true
+          }
+
+          trap cleanup EXIT
+
+          ready=0
+
+          for attempt in $(seq 1 30); do
+            if curl \
+              --silent \
+              --show-error \
+              --fail \
+              http://127.0.0.1:8080/api/v1/health/ready \
+              > /tmp/furlife-health.json; then
+              ready=1
+              break
+            fi
+
+            if ! kill -0 "$backend_pid" 2>/dev/null; then
+              echo "Backend process exited before becoming ready."
+              cat /tmp/furlife-backend.log
+              exit 1
+            fi
+
+            sleep 1
+          done
+
+          if [ "$ready" -ne 1 ]; then
+            echo "Backend did not become ready."
+            cat /tmp/furlife-backend.log
+            exit 1
+          fi
+
+          cat /tmp/furlife-health.json
+
+          grep -q '"status":"ready"' /tmp/furlife-health.json
+          grep -q '"database":"ok"' /tmp/furlife-health.json
+
+          popd
 
   flutter:
     runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
         app: [client_flutter, partner_flutter]
+
     steps:
       - uses: actions/checkout@v4
+
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: 3.44.9
           channel: stable
           cache: true
+
       - working-directory: apps/${{ matrix.app }}
         run: flutter pub get
+
       - working-directory: apps/${{ matrix.app }}
         run: flutter gen-l10n
+
       - working-directory: apps/${{ matrix.app }}
         run: dart format --output=none --set-exit-if-changed lib test
+
       - working-directory: apps/${{ matrix.app }}
         run: flutter analyze
+
       - working-directory: apps/${{ matrix.app }}
         run: flutter test
