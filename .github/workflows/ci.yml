@@ -16,7 +16,7 @@ jobs:
   repository-hygiene:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Run dependency-free baseline doctor
         run: node scripts/verify-baseline.mjs
@@ -83,7 +83,7 @@ jobs:
       ADMIN_MFA_REQUIRED: true
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: pnpm/action-setup@v4
         with:
@@ -169,7 +169,7 @@ jobs:
         app: [client_flutter, partner_flutter]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: subosito/flutter-action@v2
         with:
