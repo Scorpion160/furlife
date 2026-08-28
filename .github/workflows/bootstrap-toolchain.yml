@@ -30,7 +30,7 @@ jobs:
       DATABASE_URL: postgresql://furlife:furlife_ci_only@localhost:5432/furlife?schema=public
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 9.15.4
       - uses: actions/setup-node@v4
