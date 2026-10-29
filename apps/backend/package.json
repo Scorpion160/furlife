@@ -12,7 +12,9 @@
     "prisma:validate": "prisma validate",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "worker:outbox": "ts-node src/workers/outbox.worker.ts",
+    "worker:outbox:prod": "node dist/workers/outbox.worker.js"
   },
   "dependencies": {
     "@nestjs/common": "11.0.11",

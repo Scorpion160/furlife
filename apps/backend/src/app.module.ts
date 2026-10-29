@@ -6,6 +6,8 @@ import { validateEnv } from './config/env.schema';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './modules/health/health.module';
 import { IdentityModule } from './modules/identity/identity.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { OutboxModule } from './modules/outbox/outbox.module';
 import { ShipmentsModule } from './modules/shipments/shipments.module';
 
 @Module({
@@ -23,6 +25,8 @@ import { ShipmentsModule } from './modules/shipments/shipments.module';
     DatabaseModule,
     HealthModule,
     IdentityModule,
+    NotificationsModule,
+    OutboxModule,
     ShipmentsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
