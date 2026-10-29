@@ -9,6 +9,7 @@ import { IdentityModule } from './modules/identity/identity.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { OutboxModule } from './modules/outbox/outbox.module';
 import { ShipmentsModule } from './modules/shipments/shipments.module';
+import { TripsModule } from './modules/trips/trips.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ShipmentsModule } from './modules/shipments/shipments.module';
     NotificationsModule,
     OutboxModule,
     ShipmentsModule,
+    TripsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
