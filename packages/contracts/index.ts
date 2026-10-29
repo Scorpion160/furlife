@@ -134,3 +134,39 @@ export type NotificationView = {
 export type NotificationUnreadCount = {
   count: number;
 };
+
+export type TripStatus =
+  | 'DRAFT'
+  | 'PENDING_REVIEW'
+  | 'APPROVED'
+  | 'OPEN'
+  | 'FULL'
+  | 'DEPARTED'
+  | 'ARRIVED'
+  | 'COMPLETED'
+  | 'CANCELLED';
+
+export type CreateTripDraftRequest = {
+  corridorId: string;
+  flightNo: string;
+  departureAt: string;
+  capacityKg: number;
+};
+
+export type SubmitTripRequest = {
+  version: number;
+};
+
+export type TripView = {
+  id: string;
+  status: TripStatus;
+  version: number;
+  flightNo: string;
+  departureAt: string;
+  capacityKg: string;
+  reservedKg: string;
+  availableKg: string;
+  createdAt: string;
+  updatedAt: string;
+  corridor: ShipmentCorridor;
+};
