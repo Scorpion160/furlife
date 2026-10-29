@@ -83,3 +83,38 @@ export type ShipmentView = {
   corridor: ShipmentCorridor;
   parcels: ShipmentParcel[];
 };
+
+export type ShipmentMediaPurpose = 'DECLARATION_PHOTO';
+
+export type ShipmentMediaView = {
+  id: string;
+  contentType: 'image/jpeg' | 'image/png' | 'image/webp';
+  sizeBytes: string;
+  sha256: string;
+  purpose: ShipmentMediaPurpose;
+  createdAt: string;
+};
+
+export type CreateShipmentMediaUploadRequest = {
+  contentType: ShipmentMediaView['contentType'];
+  sizeBytes: number;
+  sha256: string;
+  purpose: ShipmentMediaPurpose;
+};
+
+export type ShipmentMediaUploadIntent = CreateShipmentMediaUploadRequest & {
+  objectKey: string;
+  uploadUrl: string;
+  requiredHeaders: Record<string, string>;
+  expiresAt: string;
+};
+
+export type ConfirmShipmentMediaUploadRequest =
+  CreateShipmentMediaUploadRequest & {
+    objectKey: string;
+  };
+
+export type ShipmentMediaDownload = {
+  downloadUrl: string;
+  expiresAt: string;
+};
