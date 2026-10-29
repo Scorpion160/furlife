@@ -118,3 +118,19 @@ export type ShipmentMediaDownload = {
   downloadUrl: string;
   expiresAt: string;
 };
+
+export type NotificationView = {
+  id: string;
+  type: string;
+  title: string;
+  body: string;
+  relatedType: string | null;
+  relatedId: string | null;
+  payload: unknown;
+  readAt: string | null;
+  createdAt: string;
+};
+
+export type NotificationUnreadCount = {
+  count: number;
+};
