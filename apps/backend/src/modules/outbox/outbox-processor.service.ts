@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OutboxStatus, type Prisma } from '@prisma/client';
 import { PrismaService } from '../../database/prisma.service';
+import { MatchingService } from '../matching/matching.service';
 import { NotificationsService } from '../notifications/notifications.service';
 
 const PROCESSING_LEASE_MS = 5 * 60 * 1000;
@@ -10,6 +11,7 @@ export class OutboxProcessorService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly notifications: NotificationsService,
+    private readonly matching: MatchingService,
   ) {}
 
   async processBatch(limit = 20): Promise<number> {
@@ -100,6 +102,8 @@ export class OutboxProcessorService {
           status: 'SUBMITTED',
         },
       });
+
+      await this.matching.onShipmentSubmitted(aggregateId);
       return;
     }
 
@@ -119,6 +123,32 @@ export class OutboxProcessorService {
         payload: {
           tripId: aggregateId,
           status: 'APPROVED',
+        },
+      });
+      return;
+    }
+
+    if (eventType === 'trip.opened') {
+      await this.matching.onTripOpened(aggregateId);
+      return;
+    }
+
+    if (eventType === 'shipment.matching.started') {
+      const data = this.asObject(payload);
+      const clientId = this.requiredString(data, 'clientId');
+      const publicRef = this.requiredString(data, 'publicRef');
+
+      await this.notifications.createDeduplicated({
+        userId: clientId,
+        type: 'shipment_matching_started',
+        title: 'Voyage compatible trouvé',
+        body: `Une proposition de voyage est disponible pour votre colis ${publicRef}.`,
+        relatedType: 'shipment',
+        relatedId: aggregateId,
+        dedupeKey: `shipment_matching_started:${aggregateId}:${clientId}`,
+        payload: {
+          shipmentId: aggregateId,
+          status: 'MATCHING',
         },
       });
     }

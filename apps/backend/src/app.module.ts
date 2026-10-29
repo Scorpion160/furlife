@@ -6,6 +6,7 @@ import { validateEnv } from './config/env.schema';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './modules/health/health.module';
 import { IdentityModule } from './modules/identity/identity.module';
+import { MatchingModule } from './modules/matching/matching.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { OutboxModule } from './modules/outbox/outbox.module';
 import { ShipmentsModule } from './modules/shipments/shipments.module';
@@ -26,6 +27,7 @@ import { TripsModule } from './modules/trips/trips.module';
     DatabaseModule,
     HealthModule,
     IdentityModule,
+    MatchingModule,
     NotificationsModule,
     OutboxModule,
     ShipmentsModule,
