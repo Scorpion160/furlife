@@ -151,6 +151,49 @@ export class OutboxProcessorService {
           status: 'MATCHING',
         },
       });
+      return;
+    }
+
+    if (eventType === 'match.accepted') {
+      const data = this.asObject(payload);
+      const clientId = this.requiredString(data, 'clientId');
+      const carrierId = this.requiredString(data, 'carrierId');
+      const shipmentId = this.requiredString(data, 'shipmentId');
+      const publicRef = this.requiredString(data, 'publicRef');
+      const tripId = this.requiredString(data, 'tripId');
+      const flightNo = this.requiredString(data, 'flightNo');
+
+      await this.notifications.createDeduplicated({
+        userId: clientId,
+        type: 'match_accepted',
+        title: 'Voyage sélectionné',
+        body: `Votre colis ${publicRef} est maintenant associé au voyage ${flightNo}.`,
+        relatedType: 'shipment',
+        relatedId: shipmentId,
+        dedupeKey: `match_accepted:${aggregateId}:${clientId}`,
+        payload: {
+          matchId: aggregateId,
+          shipmentId,
+          tripId,
+          status: 'MATCHED',
+        },
+      });
+
+      await this.notifications.createDeduplicated({
+        userId: carrierId,
+        type: 'match_assigned',
+        title: 'Colis associé à votre voyage',
+        body: `Un colis a été associé à votre voyage ${flightNo}.`,
+        relatedType: 'trip',
+        relatedId: tripId,
+        dedupeKey: `match_assigned:${aggregateId}:${carrierId}`,
+        payload: {
+          matchId: aggregateId,
+          shipmentId,
+          tripId,
+          status: 'ACCEPTED',
+        },
+      });
     }
   }
 

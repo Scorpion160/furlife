@@ -202,3 +202,5 @@ export type MatchProposalView = {
     corridor: ShipmentCorridor;
   };
 };
+
+export type AcceptMatchResult = MatchProposalView;
