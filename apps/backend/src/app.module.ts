@@ -6,6 +6,7 @@ import { validateEnv } from './config/env.schema';
 import { DatabaseModule } from './database/database.module';
 import { HealthModule } from './modules/health/health.module';
 import { IdentityModule } from './modules/identity/identity.module';
+import { ShipmentsModule } from './modules/shipments/shipments.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { IdentityModule } from './modules/identity/identity.module';
     DatabaseModule,
     HealthModule,
     IdentityModule,
+    ShipmentsModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
