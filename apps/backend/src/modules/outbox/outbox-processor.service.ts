@@ -54,7 +54,11 @@ export class OutboxProcessorService {
       const attempt = candidate.attempts + 1;
 
       try {
-        await this.dispatch(candidate.eventType, candidate.aggregateId, candidate.payload);
+        await this.dispatch(
+          candidate.eventType,
+          candidate.aggregateId,
+          candidate.payload,
+        );
 
         await this.prisma.outboxEvent.update({
           where: { id: candidate.id },
@@ -78,27 +82,46 @@ export class OutboxProcessorService {
     aggregateId: string,
     payload: Prisma.JsonValue,
   ): Promise<void> {
-    if (eventType !== 'shipment.submitted') {
+    if (eventType === 'shipment.submitted') {
+      const data = this.asObject(payload);
+      const clientId = this.requiredString(data, 'clientId');
+      const publicRef = this.requiredString(data, 'publicRef');
+
+      await this.notifications.createDeduplicated({
+        userId: clientId,
+        type: 'shipment_submitted',
+        title: 'Colis soumis',
+        body: `Votre colis ${publicRef} a été soumis avec succès.`,
+        relatedType: 'shipment',
+        relatedId: aggregateId,
+        dedupeKey: `shipment_submitted:${aggregateId}:${clientId}`,
+        payload: {
+          shipmentId: aggregateId,
+          status: 'SUBMITTED',
+        },
+      });
       return;
     }
 
-    const data = this.asObject(payload);
-    const clientId = this.requiredString(data, 'clientId');
-    const publicRef = this.requiredString(data, 'publicRef');
+    if (eventType === 'trip.approved') {
+      const data = this.asObject(payload);
+      const carrierId = this.requiredString(data, 'carrierId');
+      const flightNo = this.requiredString(data, 'flightNo');
 
-    await this.notifications.createDeduplicated({
-      userId: clientId,
-      type: 'shipment_submitted',
-      title: 'Colis soumis',
-      body: `Votre colis ${publicRef} a été soumis avec succès.`,
-      relatedType: 'shipment',
-      relatedId: aggregateId,
-      dedupeKey: `shipment_submitted:${aggregateId}:${clientId}`,
-      payload: {
-        shipmentId: aggregateId,
-        status: 'SUBMITTED',
-      },
-    });
+      await this.notifications.createDeduplicated({
+        userId: carrierId,
+        type: 'trip_approved',
+        title: 'Voyage approuvé',
+        body: `Votre voyage ${flightNo} a été approuvé. Vous pouvez maintenant l’ouvrir aux colis.`,
+        relatedType: 'trip',
+        relatedId: aggregateId,
+        dedupeKey: `trip_approved:${aggregateId}:${carrierId}`,
+        payload: {
+          tripId: aggregateId,
+          status: 'APPROVED',
+        },
+      });
+    }
   }
 
   private async recoverStaleLeases(now: Date): Promise<void> {

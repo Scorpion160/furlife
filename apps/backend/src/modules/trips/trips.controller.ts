@@ -17,6 +17,7 @@ import {
 } from '../identity/guards/access-token.guard';
 import { CreateTripDraftDto } from './dto/create-trip-draft.dto';
 import { SubmitTripDto } from './dto/submit-trip.dto';
+import { TransitionTripDto } from './dto/transition-trip.dto';
 import { TripsService } from './trips.service';
 
 @ApiTags('trips')
@@ -70,6 +71,22 @@ export class TripsController {
       request.auth!,
       id,
       body,
+      response.locals.requestId as string | undefined,
+    );
+  }
+
+  @Post(':id/open')
+  @Throttle({ sensitive: { limit: 20, ttl: 60_000 } })
+  open(
+    @Param('id') id: string,
+    @Body() body: TransitionTripDto,
+    @Req() request: AuthenticatedRequest,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.trips.open(
+      request.auth!,
+      id,
+      body.version,
       response.locals.requestId as string | undefined,
     );
   }
