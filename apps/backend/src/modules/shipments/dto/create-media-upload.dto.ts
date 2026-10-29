@@ -17,7 +17,7 @@ export const shipmentMediaContentTypes = [
 export const shipmentMediaPurposes = ['DECLARATION_PHOTO'] as const;
 
 export class CreateMediaUploadDto {
-  @IsIn(shipmentMediaContentTypes)
+  @IsIn([...shipmentMediaContentTypes])
   contentType!: (typeof shipmentMediaContentTypes)[number];
 
   @Type(() => Number)
@@ -30,6 +30,6 @@ export class CreateMediaUploadDto {
   @Matches(/^[a-fA-F0-9]{64}$/)
   sha256!: string;
 
-  @IsIn(shipmentMediaPurposes)
+  @IsIn([...shipmentMediaPurposes])
   purpose!: (typeof shipmentMediaPurposes)[number];
 }
