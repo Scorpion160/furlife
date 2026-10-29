@@ -173,6 +173,7 @@ model Corridor {
   updatedAt          DateTime @updatedAt
   trips              Trip[]
   shipments          Shipment[]
+  pricingRule        PricingRule?
 
   @@unique([originCountry, originCity, destinationCountry, destinationCity])
   @@index([isActive])
@@ -227,6 +228,7 @@ model Shipment {
   custodyEvents       CustodyEvent[]
   media               MediaAsset[]
   incidents           Incident[]
+  pricingQuotes       PricingQuote[]
 
   @@index([clientId, createdAt])
   @@index([corridorId, status])
@@ -256,10 +258,47 @@ model Match {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   shipment   Shipment    @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
-  trip       Trip        @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  trip         Trip          @relation(fields: [tripId], references: [id], onDelete: Cascade)
+  pricingQuote PricingQuote?
 
   @@unique([shipmentId, tripId])
   @@index([tripId, status])
+}
+
+model PricingRule {
+  id           String   @id @default(cuid())
+  corridorId   String   @unique
+  baseFee      Decimal  @db.Decimal(14, 2)
+  pricePerKg   Decimal  @db.Decimal(14, 2)
+  minimumFee   Decimal  @default(0) @db.Decimal(14, 2)
+  isActive     Boolean  @default(false)
+  version      Int      @default(1)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  corridor     Corridor @relation(fields: [corridorId], references: [id], onDelete: Restrict)
+  quotes       PricingQuote[]
+
+  @@index([isActive])
+}
+
+model PricingQuote {
+  id            String      @id @default(cuid())
+  shipmentId    String
+  matchId       String      @unique
+  pricingRuleId String
+  currency      String
+  weightKg      Decimal     @db.Decimal(8, 2)
+  baseFee       Decimal     @db.Decimal(14, 2)
+  variableFee   Decimal     @db.Decimal(14, 2)
+  totalAmount   Decimal     @db.Decimal(14, 2)
+  ruleVersion   Int
+  createdAt     DateTime    @default(now())
+  shipment      Shipment    @relation(fields: [shipmentId], references: [id], onDelete: Restrict)
+  match         Match       @relation(fields: [matchId], references: [id], onDelete: Restrict)
+  pricingRule   PricingRule @relation(fields: [pricingRuleId], references: [id], onDelete: Restrict)
+
+  @@index([shipmentId, createdAt])
+  @@index([pricingRuleId, createdAt])
 }
 
 model CustodyEvent {

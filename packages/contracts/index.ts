@@ -204,3 +204,45 @@ export type MatchProposalView = {
 };
 
 export type AcceptMatchResult = MatchProposalView;
+
+export type PricingRuleView = {
+  id: string;
+  corridorId: string;
+  baseFee: string;
+  pricePerKg: string;
+  minimumFee: string;
+  currency: string;
+  isActive: boolean;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+  corridor: {
+    id: string;
+    originCountry: string;
+    originCity: string;
+    destinationCountry: string;
+    destinationCity: string;
+  };
+};
+
+export type UpsertPricingRuleRequest = {
+  baseFee: string;
+  pricePerKg: string;
+  minimumFee: string;
+  isActive: boolean;
+  version?: number;
+};
+
+export type PricingQuoteView = {
+  id: string;
+  shipmentId: string;
+  matchId: string;
+  pricingRuleId: string;
+  currency: string;
+  weightKg: string;
+  baseFee: string;
+  variableFee: string;
+  totalAmount: string;
+  ruleVersion: number;
+  createdAt: string;
+};
