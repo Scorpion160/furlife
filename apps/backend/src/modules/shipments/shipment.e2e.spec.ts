@@ -1,10 +1,10 @@
-import { ValidationPipe, type INestApplication } from '@nestjs/common';
+import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { randomInt } from 'node:crypto';
 import request from 'supertest';
 import { AppModule } from '../../app.module';
-import { HttpExceptionFilter } from '../../common/filters/http-exception.filter';
 import { PrismaService } from '../../database/prisma.service';
+import { configureApiTestApp } from '../../testing/configure-api-test-app';
 import { OtpSenderService } from '../identity/services/otp-sender.service';
 
 class CapturingOtpSender {
@@ -57,18 +57,7 @@ describe('Shipment draft vertical slice', () => {
       .useValue(otpSender)
       .compile();
 
-    app = moduleRef.createNestApplication();
-    app.setGlobalPrefix('api/v1');
-    app.useGlobalFilters(new HttpExceptionFilter());
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        stopAtFirstError: false,
-      }),
-    );
-
+    app = configureApiTestApp(moduleRef.createNestApplication());
     prisma = moduleRef.get(PrismaService);
     await app.init();
 
