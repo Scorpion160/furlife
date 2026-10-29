@@ -9,6 +9,7 @@ import { IdentityModule } from './modules/identity/identity.module';
 import { MatchingModule } from './modules/matching/matching.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { OutboxModule } from './modules/outbox/outbox.module';
+import { PricingModule } from './modules/pricing/pricing.module';
 import { ShipmentsModule } from './modules/shipments/shipments.module';
 import { TripsModule } from './modules/trips/trips.module';
 
@@ -30,6 +31,7 @@ import { TripsModule } from './modules/trips/trips.module';
     MatchingModule,
     NotificationsModule,
     OutboxModule,
+    PricingModule,
     ShipmentsModule,
     TripsModule,
   ],
