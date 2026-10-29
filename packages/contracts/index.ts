@@ -178,3 +178,27 @@ export type TransitionTripRequest = {
 export type TripReviewView = TripView & {
   carrierId: string;
 };
+
+export type MatchStatus =
+  | 'PROPOSED'
+  | 'ACCEPTED'
+  | 'REJECTED'
+  | 'EXPIRED'
+  | 'CANCELLED';
+
+export type MatchProposalView = {
+  id: string;
+  status: MatchStatus;
+  score: number;
+  createdAt: string;
+  updatedAt: string;
+  trip: {
+    id: string;
+    flightNo: string;
+    departureAt: string;
+    capacityKg: string;
+    reservedKg: string;
+    availableKg: string;
+    corridor: ShipmentCorridor;
+  };
+};
