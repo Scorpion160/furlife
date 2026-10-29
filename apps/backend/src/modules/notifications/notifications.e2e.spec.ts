@@ -1,6 +1,6 @@
 import type { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { OutboxStatus } from '@prisma/client';
+import { OutboxStatus, type Prisma } from '@prisma/client';
 import { randomInt } from 'node:crypto';
 import request from 'supertest';
 import { AppModule } from '../../app.module';
@@ -226,7 +226,7 @@ describe('Notifications and outbox vertical slice', () => {
         aggregate: 'shipment',
         aggregateId: shipment.id,
         eventType: 'shipment.submitted',
-        payload: event.payload,
+        payload: JSON.parse(JSON.stringify(event.payload)) as Prisma.InputJsonValue,
       },
     });
     eventIds.push(duplicate.id);
