@@ -72,6 +72,22 @@ export class TripsService {
     return trips.map((trip) => this.toResponse(trip));
   }
 
+  async listPendingForReview(auth: AuthContext) {
+    this.ensureOperator(auth);
+
+    const trips = await this.prisma.trip.findMany({
+      where: { status: 'PENDING_REVIEW' },
+      include: tripInclude,
+      orderBy: { departureAt: 'asc' },
+      take: 100,
+    });
+
+    return trips.map((trip) => ({
+      ...this.toResponse(trip),
+      carrierId: trip.carrierId,
+    }));
+  }
+
   async getMine(auth: AuthContext, id: string) {
     this.ensureCarrier(auth);
 
@@ -174,15 +190,7 @@ export class TripsService {
         });
       }
 
-      this.assertFutureDeparture(current.departureAt);
-      await this.assertCorridorAvailable(tx, current.corridorId);
-
-      if (current.reservedKg.greaterThan(current.capacityKg)) {
-        throw new ConflictException({
-          code: 'TRIP_CAPACITY_INCONSISTENT',
-          message: 'La capacité disponible du voyage est incohérente.',
-        });
-      }
+      await this.assertTripCanProgress(tx, current);
 
       const updated = await tx.trip.updateMany({
         where: {
@@ -244,6 +252,204 @@ export class TripsService {
     });
   }
 
+  async approve(
+    auth: AuthContext,
+    id: string,
+    version: number,
+    requestId?: string,
+  ) {
+    this.ensureOperator(auth);
+
+    return this.prisma.$transaction(async (tx) => {
+      const current = await tx.trip.findUnique({
+        where: { id },
+        include: tripInclude,
+      });
+
+      if (!current) {
+        throw new NotFoundException({
+          code: 'TRIP_NOT_FOUND',
+          message: 'Ce voyage est introuvable.',
+        });
+      }
+
+      if (current.status !== 'PENDING_REVIEW') {
+        throw new ConflictException({
+          code: 'TRIP_NOT_PENDING_REVIEW',
+          message: 'Ce voyage n’est pas en attente de revue.',
+        });
+      }
+
+      if (current.version !== version) {
+        throw new ConflictException({
+          code: 'TRIP_VERSION_CONFLICT',
+          message: 'Le voyage a été modifié. Actualisez avant de continuer.',
+        });
+      }
+
+      await this.assertTripCanProgress(tx, current);
+
+      const updated = await tx.trip.updateMany({
+        where: {
+          id: current.id,
+          status: 'PENDING_REVIEW',
+          version,
+        },
+        data: {
+          status: 'APPROVED',
+          version: { increment: 1 },
+        },
+      });
+
+      if (updated.count !== 1) {
+        throw new ConflictException({
+          code: 'TRIP_VERSION_CONFLICT',
+          message: 'Le voyage a été modifié. Actualisez avant de continuer.',
+        });
+      }
+
+      await tx.outboxEvent.create({
+        data: {
+          aggregate: 'trip',
+          aggregateId: current.id,
+          eventType: 'trip.approved',
+          payload: {
+            tripId: current.id,
+            carrierId: current.carrierId,
+            corridorId: current.corridorId,
+            flightNo: current.flightNo,
+            departureAt: current.departureAt.toISOString(),
+            version: version + 1,
+          },
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          actorId: auth.userId,
+          requestId: requestId ?? null,
+          action: 'trip.approve',
+          entity: 'trip',
+          entityId: current.id,
+          metadata: {
+            carrierId: current.carrierId,
+            fromStatus: 'PENDING_REVIEW',
+            toStatus: 'APPROVED',
+            version: version + 1,
+          },
+        },
+      });
+
+      const approved = await tx.trip.findUniqueOrThrow({
+        where: { id: current.id },
+        include: tripInclude,
+      });
+
+      return this.toResponse(approved);
+    });
+  }
+
+  async open(
+    auth: AuthContext,
+    id: string,
+    version: number,
+    requestId?: string,
+  ) {
+    this.ensureCarrier(auth);
+
+    return this.prisma.$transaction(async (tx) => {
+      const current = await tx.trip.findFirst({
+        where: {
+          id,
+          carrierId: auth.userId,
+        },
+        include: tripInclude,
+      });
+
+      if (!current) {
+        throw new NotFoundException({
+          code: 'TRIP_NOT_FOUND',
+          message: 'Ce voyage est introuvable.',
+        });
+      }
+
+      if (current.status !== 'APPROVED') {
+        throw new ConflictException({
+          code: 'TRIP_NOT_APPROVED',
+          message: 'Ce voyage doit être approuvé avant son ouverture.',
+        });
+      }
+
+      if (current.version !== version) {
+        throw new ConflictException({
+          code: 'TRIP_VERSION_CONFLICT',
+          message: 'Le voyage a été modifié. Actualisez avant de continuer.',
+        });
+      }
+
+      await this.assertTripCanProgress(tx, current);
+
+      const updated = await tx.trip.updateMany({
+        where: {
+          id: current.id,
+          carrierId: auth.userId,
+          status: 'APPROVED',
+          version,
+        },
+        data: {
+          status: 'OPEN',
+          version: { increment: 1 },
+        },
+      });
+
+      if (updated.count !== 1) {
+        throw new ConflictException({
+          code: 'TRIP_VERSION_CONFLICT',
+          message: 'Le voyage a été modifié. Actualisez avant de continuer.',
+        });
+      }
+
+      await tx.outboxEvent.create({
+        data: {
+          aggregate: 'trip',
+          aggregateId: current.id,
+          eventType: 'trip.opened',
+          payload: {
+            tripId: current.id,
+            carrierId: auth.userId,
+            corridorId: current.corridorId,
+            flightNo: current.flightNo,
+            departureAt: current.departureAt.toISOString(),
+            availableKg: current.capacityKg.minus(current.reservedKg).toString(),
+            version: version + 1,
+          },
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          actorId: auth.userId,
+          requestId: requestId ?? null,
+          action: 'trip.open',
+          entity: 'trip',
+          entityId: current.id,
+          metadata: {
+            fromStatus: 'APPROVED',
+            toStatus: 'OPEN',
+            version: version + 1,
+          },
+        },
+      });
+
+      const opened = await tx.trip.findUniqueOrThrow({
+        where: { id: current.id },
+        include: tripInclude,
+      });
+
+      return this.toResponse(opened);
+    });
+  }
+
   private ensureCarrier(auth: AuthContext): void {
     if (auth.status !== 'ACTIVE') {
       throw new ForbiddenException({
@@ -256,6 +462,40 @@ export class TripsService {
       throw new ForbiddenException({
         code: 'TRIP_CARRIER_ROLE_REQUIRED',
         message: 'Le rôle Voyageur vérifié est requis pour cette opération.',
+      });
+    }
+  }
+
+  private ensureOperator(auth: AuthContext): void {
+    if (auth.status !== 'ACTIVE') {
+      throw new ForbiddenException({
+        code: 'TRIP_ACCOUNT_NOT_ACTIVE',
+        message: 'Votre compte doit être actif pour gérer des voyages.',
+      });
+    }
+
+    if (!auth.roles.some((role) => role === 'OPERATOR' || role === 'ADMIN')) {
+      throw new ForbiddenException({
+        code: 'TRIP_OPERATOR_ROLE_REQUIRED',
+        message: 'Le rôle Opérateur est requis pour cette opération.',
+      });
+    }
+  }
+
+  private async assertTripCanProgress(
+    db: TripValidationDb,
+    trip: Pick<
+      TripRecord,
+      'corridorId' | 'departureAt' | 'capacityKg' | 'reservedKg'
+    >,
+  ): Promise<void> {
+    this.assertFutureDeparture(trip.departureAt);
+    await this.assertCorridorAvailable(db, trip.corridorId);
+
+    if (trip.reservedKg.greaterThan(trip.capacityKg)) {
+      throw new ConflictException({
+        code: 'TRIP_CAPACITY_INCONSISTENT',
+        message: 'La capacité disponible du voyage est incohérente.',
       });
     }
   }

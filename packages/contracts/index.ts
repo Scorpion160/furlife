@@ -170,3 +170,11 @@ export type TripView = {
   updatedAt: string;
   corridor: ShipmentCorridor;
 };
+
+export type TransitionTripRequest = {
+  version: number;
+};
+
+export type TripReviewView = TripView & {
+  carrierId: string;
+};
