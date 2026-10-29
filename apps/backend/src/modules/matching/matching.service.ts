@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -66,6 +67,203 @@ export class MatchingService {
     });
 
     return matches.map((match) => this.toResponse(match));
+  }
+
+  async accept(
+    auth: AuthContext,
+    shipmentId: string,
+    matchId: string,
+    requestId?: string,
+  ) {
+    this.ensureClient(auth);
+
+    return this.prisma.$transaction(async (tx) => {
+      const match = await tx.match.findFirst({
+        where: {
+          id: matchId,
+          shipmentId,
+          shipment: {
+            clientId: auth.userId,
+          },
+        },
+        include: {
+          shipment: {
+            include: {
+              parcels: {
+                select: { declaredWeight: true },
+              },
+            },
+          },
+          trip: true,
+        },
+      });
+
+      if (!match) {
+        throw new NotFoundException({
+          code: 'MATCH_NOT_FOUND',
+          message: 'Cette proposition est introuvable.',
+        });
+      }
+
+      if (match.status === 'ACCEPTED') {
+        const accepted = await tx.match.findUniqueOrThrow({
+          where: { id: match.id },
+          include: matchInclude,
+        });
+        return this.toResponse(accepted);
+      }
+
+      if (match.status !== 'PROPOSED') {
+        throw new ConflictException({
+          code: 'MATCH_NOT_PROPOSED',
+          message: 'Cette proposition n’est plus disponible.',
+        });
+      }
+
+      if (match.shipment.status !== 'MATCHING') {
+        throw new ConflictException({
+          code: 'SHIPMENT_NOT_MATCHING',
+          message: 'Ce colis n’est plus en phase de recherche de voyage.',
+        });
+      }
+
+      if (
+        match.trip.status !== 'OPEN' ||
+        match.trip.departureAt.getTime() <= Date.now() ||
+        match.trip.corridorId !== match.shipment.corridorId
+      ) {
+        throw new ConflictException({
+          code: 'MATCH_TRIP_UNAVAILABLE',
+          message: 'Ce voyage n’est plus disponible.',
+        });
+      }
+
+      const shipmentWeight = this.shipmentWeight(match.shipment.parcels);
+      const newReservedKg = match.trip.reservedKg.plus(shipmentWeight);
+
+      if (newReservedKg.greaterThan(match.trip.capacityKg)) {
+        throw new ConflictException({
+          code: 'MATCH_CAPACITY_UNAVAILABLE',
+          message: 'La capacité restante de ce voyage est insuffisante.',
+        });
+      }
+
+      const tripUpdated = await tx.trip.updateMany({
+        where: {
+          id: match.trip.id,
+          status: 'OPEN',
+          version: match.trip.version,
+          reservedKg: match.trip.reservedKg,
+        },
+        data: {
+          reservedKg: newReservedKg,
+          version: { increment: 1 },
+          status: newReservedKg.equals(match.trip.capacityKg) ? 'FULL' : 'OPEN',
+        },
+      });
+
+      if (tripUpdated.count !== 1) {
+        throw new ConflictException({
+          code: 'MATCH_CAPACITY_CHANGED',
+          message: 'La capacité du voyage vient de changer. Actualisez les propositions.',
+        });
+      }
+
+      const matchUpdated = await tx.match.updateMany({
+        where: {
+          id: match.id,
+          shipmentId,
+          status: 'PROPOSED',
+        },
+        data: {
+          status: 'ACCEPTED',
+        },
+      });
+
+      if (matchUpdated.count !== 1) {
+        throw new ConflictException({
+          code: 'MATCH_NOT_PROPOSED',
+          message: 'Cette proposition n’est plus disponible.',
+        });
+      }
+
+      const shipmentUpdated = await tx.shipment.updateMany({
+        where: {
+          id: shipmentId,
+          clientId: auth.userId,
+          status: 'MATCHING',
+          version: match.shipment.version,
+        },
+        data: {
+          status: 'MATCHED',
+          version: { increment: 1 },
+        },
+      });
+
+      if (shipmentUpdated.count !== 1) {
+        throw new ConflictException({
+          code: 'SHIPMENT_MATCH_CHANGED',
+          message: 'Un autre choix a déjà modifié ce colis. Actualisez avant de continuer.',
+        });
+      }
+
+      await tx.match.updateMany({
+        where: {
+          shipmentId,
+          id: { not: match.id },
+          status: 'PROPOSED',
+        },
+        data: {
+          status: 'CANCELLED',
+        },
+      });
+
+      await tx.auditLog.create({
+        data: {
+          actorId: auth.userId,
+          requestId: requestId ?? null,
+          action: 'match.accept',
+          entity: 'match',
+          entityId: match.id,
+          metadata: {
+            shipmentId,
+            tripId: match.trip.id,
+            carrierId: match.trip.carrierId,
+            shipmentWeightKg: shipmentWeight.toString(),
+            reservedKgBefore: match.trip.reservedKg.toString(),
+            reservedKgAfter: newReservedKg.toString(),
+            tripStatusAfter: newReservedKg.equals(match.trip.capacityKg)
+              ? 'FULL'
+              : 'OPEN',
+          },
+        },
+      });
+
+      await tx.outboxEvent.create({
+        data: {
+          aggregate: 'match',
+          aggregateId: match.id,
+          eventType: 'match.accepted',
+          payload: {
+            matchId: match.id,
+            shipmentId,
+            clientId: auth.userId,
+            publicRef: match.shipment.publicRef,
+            tripId: match.trip.id,
+            carrierId: match.trip.carrierId,
+            flightNo: match.trip.flightNo,
+            shipmentWeightKg: shipmentWeight.toString(),
+          },
+        },
+      });
+
+      const accepted = await tx.match.findUniqueOrThrow({
+        where: { id: match.id },
+        include: matchInclude,
+      });
+
+      return this.toResponse(accepted);
+    });
   }
 
   async onShipmentSubmitted(shipmentId: string): Promise<number> {
